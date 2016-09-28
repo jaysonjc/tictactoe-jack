@@ -1,0 +1,71 @@
+class Piece {
+	field int type; // 1 naught, 2 cross
+	field int width,height;
+	
+	constructor Piece new(int t) {
+		let type = t;
+		
+		if(t=1) {
+			let width = 16;
+			let height = 16;
+		}else {
+			let width = 16;
+			let height = 16;
+		}
+		
+		return this;
+	}
+	
+	method int getType() {
+		return type;
+	}
+	
+	method void drawPiece(int x, int y) {
+		if(type=1) {
+			do drawNaught(x,y);
+		}else {
+			do drawCross(x,y);
+		}
+		return;
+	}
+	
+	method void drawNaught(int x, int y) {
+		var int ro,ri,t;
+		let t = 4;
+		let ro = width/2;
+		let ri = ro-t;
+		
+		do Screen.drawCircle(x+ro,y+ro,ro);
+		do Screen.setColor(false);
+		do Screen.drawCircle(x+ro,y+ro,ri);
+		do Screen.setColor(true);
+		return;
+	}
+	
+	method void drawCross(int x, int y) {
+		var int t,i;
+		let t = 4;
+		let i = t-1;
+		while(~(i<0)) {
+		
+			do Screen.drawLine(x,y+height-i,x+width-i,y);
+			do Screen.drawLine(x+i,y+height,x+width,y+i);
+			
+			
+			do Screen.drawLine(x+i,y,x+width,y+height-i);
+			do Screen.drawLine(x,y+i,x+width-i,y+height);
+			
+			let i = i-1;
+		}
+		return;
+	}
+	
+	method int getHeight() {
+		return height;
+	}
+	
+	method int getWidth() {
+		return width;
+	}
+
+}

@@ -1,0 +1,238 @@
+class TicTacToeGame {
+	static Board board;
+	static Piece nPiece,cPiece;
+	static int callCounter;
+	
+	function void init() {
+		// initializes all static values
+		do InputUtil.init();
+		
+		let board = Board.new(200,60);
+		let nPiece = Piece.new(1);
+		let cPiece = Piece.new(2);
+		
+		
+		// sets up game stuff
+		do TicTacToeGame.initGame();
+		return;
+	}
+	
+	function void initGame() {
+		return;
+	}
+	
+	function void processBoard() {
+		do board.evaluateBoard();
+		if(board.isWin()) {
+			do board.drawWin();
+		}
+		return;
+	}
+	
+	function void startGame() {
+		var int input;
+		var Array playerMove,computerMove;
+		
+		do InputUtil.showMessage("Press enter to contine...");
+		do TicTacToeGame.seedGame();
+		
+		
+		while(true) {
+			let input = InputUtil.readInput("Enter move (1 to 9 or 0 to quit):");
+			let playerMove = TicTacToeGame.inputToMove(input);
+			do board.makeMove(playerMove[0],playerMove[1],nPiece);
+			do playerMove.dispose();
+			do TicTacToeGame.processBoard();
+			
+			
+			let computerMove = TicTacToeGame.getComputerMove();
+			do board.makeMove(computerMove[1],computerMove[2],cPiece);
+			do computerMove.dispose();
+
+			do TicTacToeGame.processBoard();
+			
+			
+			
+			
+		}
+	
+		return;
+	}
+	
+	function Array getComputerMove() {
+		return TicTacToeGame.getTheBestMove(cPiece);
+	}
+	
+	
+	
+	function int getOtherPiece(Piece p) {
+		if(p = nPiece) {
+			return cPiece;
+		}else {
+			return nPiece;
+		}
+	}
+	
+	function Array prepareMoveResult(int row, int col,int value) {
+		var Array result;
+		let result = Array.new(3);
+		let result[1] = row;
+		let result[2] = col;
+		let result[0] = value;
+		return result;
+	}
+	
+	// 0 - result - 1 unknown, 2 draw, 3 win
+	function Array getTheBestMove(Piece p) {
+		var int moveCount,i,bestMoveR, bestMoveC,bestScore;
+		var Array moveList,otherBest,nextBest;
+		var Piece otherPiece;
+		let moveCount = board.getFreeCellCount();
+		let moveList = board.getAvailableMoves();
+		let bestScore = 0;
+		let i = 0;
+		
+		while( i < moveCount) {
+			do Keyboard.readChar();
+			do board.makeMove(moveList[2*i],moveList[(2*i)+1],p);
+			do board.evaluateBoard();
+			
+			if(board.isDraw()) {
+				return TicTacToeGame.prepareMoveResult(moveList[2*i],moveList[(2*i)+1],2);
+			}
+			if(board.isWin()) {
+				return TicTacToeGame.prepareMoveResult(moveList[2*i],moveList[(2*i)+1],3);
+			}
+			else {
+				let otherBest = TicTacToeGame.getTheBestMove(TicTacToeGame.getOtherPiece(p));
+				do Keyboard.readChar();
+				if(otherBest[0] < 2) { // if the other guy draws or wins, let us ignore this move.
+					let nextBest = TicTacToeGame.getTheBestMove(p);
+					do Keyboard.readChar();
+					if(bestScore<nextBest[0]) {
+						let bestMoveR = moveList[2*i];
+						let bestMoveC = moveList[(2*i)+1];
+						let bestScore = nextBest[0];
+					}
+					do nextBest.dispose();
+				}	
+			}	
+			do Keyboard.readChar();
+			do board.takeBackMove(moveList[2*i],moveList[(2*i)+1],p);
+			let i = i + 1;
+		}
+		
+		// return the final result!! The best move we found!
+		return TicTacToeGame.prepareMoveResult(bestMoveR, bestMoveC,1); // unknown result
+		
+	}
+
+	function Array makeComputerMove() {
+		var Array moveList,humanList,chosenMove,cm;
+		var int i,j,moveCount,humanCount,winCount;
+		let i = 0;
+		let winCount = 0;
+		let chosenMove = Array.new(3);
+		let moveCount = board.getFreeCellCount();
+		let moveList = board.getAvailableMoves();
+				
+		let chosenMove[0] = 0; // 4 is double win, 3 is win, 2 is draw and 1 is loose
+		let chosenMove[0] = moveList[0];
+		let chosenMove[1] = moveList[1];
+		
+		let callCounter = callCounter+1;
+		
+		while(i < moveCount) {
+			do board.makeMove(moveList[2*i],moveList[(2*i)+1],cPiece);
+			do board.evaluateBoard();
+			if(board.isDraw()) {
+				let chosenMove[0] = 2;  //score
+				let chosenMove[1] = moveList[2*i];
+				let chosenMove[2] = moveList[(2*i)+1];
+				return chosenMove; // For draw there is no further processing needed
+			}
+			if(board.isWin()) {
+				let winCount = winCount+1; // check for multiple wins!
+				let chosenMove[0] = 2+winCount;
+				let chosenMove[1] = moveList[2*i];
+				let chosenMove[2] = moveList[(2*i)+1];		
+			}
+			else { // clearly the board is open for further play!
+				let j = 0;
+				let humanCount = board.getFreeCellCount();
+				let humanList = board.getAvailableMoves();
+				while(j<humanCount) {
+					do board.makeMove(humanList[2*j],humanList[(2*j)+1],nPiece);
+					do board.evaluateBoard();
+					
+					if(board.isWin()) {
+						// avoid this move
+					}
+					
+					if(board.isDraw()) {
+						
+					}
+										
+					else {  // board is open for play!
+						let cm = TicTacToeGame.makeComputerMove();
+						do cm.dispose();
+					}
+					do board.takeBackMove(humanList[2*j],humanList[(2*j)+1],nPiece);
+					let j = j +1;
+				}
+				do humanList.dispose();
+			}
+			do board.takeBackMove(moveList[2*i],moveList[(2*i)+1],cPiece);
+			let i = i +1;
+		}
+		do moveList.dispose();
+		return chosenMove;
+		
+	}
+	
+	
+
+	
+	
+	function Array randomMove() {
+		var int v;
+		var Array moves;
+		while(true) {
+			let v = Random.randRange(8)+1;
+			let moves = TicTacToeGame.inputToMove(v);
+			if(board.isFree(moves[0],moves[1])) {
+				return moves;
+			}
+		}
+		return moves;
+		
+	}
+	
+	function Array inputToMove(int input) {
+		var Array moves;
+		let moves = Array.new(2);
+		let moves[0] = (input-1)/3 ; //row;
+		let moves[1] = (input-1)-(3*moves[0]);
+		return moves;
+		
+	}
+	
+	function void seedGame() {
+		var int seedCounter;
+		var boolean enterPressed;
+		let enterPressed = false;
+		let seedCounter = 1;
+		while(~enterPressed) {
+			if(Keyboard.keyPressed()=128) {
+				let enterPressed = true;
+			}
+			let seedCounter = seedCounter+1;
+			if(seedCounter > 25444) {
+				let seedCounter = 1;
+			}
+		}
+		do Random.setSeed(seedCounter);
+		return;
+	}
+	
+}

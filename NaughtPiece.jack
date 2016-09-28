@@ -1,0 +1,6 @@
+class NaughtPiece {
+	
+	constructor NaughtPiece new() {
+		return this;
+	}
+}

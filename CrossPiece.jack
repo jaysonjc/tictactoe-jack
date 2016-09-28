@@ -1,0 +1,5 @@
+class CrossPiece {
+	constructor CrossPiece new() {
+		return this;
+	}
+}

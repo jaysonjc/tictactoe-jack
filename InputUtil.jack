@@ -1,0 +1,41 @@
+class InputUtil {
+	static int mr,mc,ir,ic;
+
+	function void init() {
+		let mr = 0;
+		let mc = 0;
+		let ir = 1;
+		let ic = 0;
+		return;
+	}
+
+	function void eraseMessage() {
+		do Output.moveCursor(mr,mc);
+		do Output.printString("                              ");
+		return;
+	}
+
+	function void showMessage(String s) {
+		do InputUtil.eraseMessage();
+		do Output.moveCursor(mr,mc);
+		do Output.printString(s);
+		return;
+	}
+	
+	// reads only valid inputs!
+	// returns 0 for quit and 1 to 9 for moves!
+	function int readInput(String s) {
+		var char c;
+		var int choice;
+		while(true) {
+			do Output.moveCursor(ir,ic);
+			do Output.printString(s);
+			let c = Keyboard.readChar();
+			// 48 to 57
+			if((c>47) & (c<58)) {
+				return c-48;
+			}
+		}
+		return 0;// Never reach here!
+	}
+}
