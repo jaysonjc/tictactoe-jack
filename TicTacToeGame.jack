@@ -65,6 +65,96 @@ class TicTacToeGame {
 	
 	
 	
+	function Array findWinOrDraw(Piece p) {
+		var boolean found;
+		var int moveCount,i;
+		var Array moveList,bestMove;
+		let bestMove = 0;
+		let i = 0;
+		let found = false;
+		
+		let moveCount = board.getFreeCellCount();
+		let moveList = board.getAvailableMoves();
+		
+		while( (i < moveCount) & (~found)) {
+			//do Keyboard.readChar();
+			do board.makeMove(moveList[2*i],moveList[(2*i)+1],p);
+			do board.evaluateBoard();
+			
+			if(board.isDraw()) {
+				let bestMove = Array.new(3);
+				let bestMove[0] = 1;
+				let bestMove[1] = moveList[2*i];
+				let bestMove[2] = moveList[(2*i)+1];
+				let found = true;
+			}
+			if(board.isWin() ) {
+				let bestMove = Array.new(3);
+				let bestMove[0] = 2;
+				let bestMove[1] = moveList[2*i];
+				let bestMove[2] = moveList[(2*i)+1];
+				let found = true;
+			}
+			//do Keyboard.readChar();
+			
+			do board.takeBackMove(moveList[2*i],moveList[(2*i)+1],p);
+			let i = i + 1;
+		}
+		do moveList.dispose();
+		return bestMove;
+		
+	}
+	
+	
+	
+	function Array getTheBestMove(Piece p) {
+		var Array bestMove,moveList;
+		var int i,moveCount,bestResultScore,bestR,bestC;
+		let bestMove = TicTacToeGame.findWinOrDraw(p);
+		let bestResultScore = 0;
+		
+		if(~(bestMove=0)) { // we found a draw or win!
+			return bestMove;
+		}else {
+			// go through each move and try to find the one with best end result.
+			let moveCount = board.getFreeCellCount();
+			let moveList = board.getAvailableMoves();
+			let i = 0;
+			while( i < moveCount) {
+				//do Keyboard.readChar();
+				do board.makeMove(moveList[2*i],moveList[(2*i)+1],p);
+				let otherBest = TicTacToeGame.getTheBestMove(TicTacToeGame.getOtherPiece(p));
+				if(otherBest[0]<otherMoveScore) {
+					let otherMoveScore = otherBest[0];
+					let bestR = moveList[2*i];
+					let bestC = moveList[(2*i)+1];
+				}
+				do otherBest.dispose();
+				//do Keyboard.readChar();
+				do board.takeBackMove(moveList[2*i],moveList[(2*i)+1],p);
+				let i = i + 1;
+			}
+			do moveList.dispose();
+			// which is the best move?
+			let bestMove = Array.new(3);
+			let bestMove[0] = 0;
+			let bestMove[1] = bestR;
+			let bestMove[2] = bestC;
+			
+		}
+		return bestMove;
+		
+	}
+	
+	function 
+	
+	
+	
+	
+	
+	
+	
+	
 	function int getOtherPiece(Piece p) {
 		if(p = nPiece) {
 			return cPiece;
@@ -83,7 +173,7 @@ class TicTacToeGame {
 	}
 	
 	// 0 - result - 1 unknown, 2 draw, 3 win
-	function Array getTheBestMove(Piece p) {
+	function Array getTheBestMove2(Piece p) {
 		var int moveCount,i,bestMoveR, bestMoveC,bestScore;
 		var Array moveList,otherBest,nextBest;
 		var Piece otherPiece;
@@ -106,15 +196,11 @@ class TicTacToeGame {
 			else {
 				let otherBest = TicTacToeGame.getTheBestMove(TicTacToeGame.getOtherPiece(p));
 				do Keyboard.readChar();
-				if(otherBest[0] < 2) { // if the other guy draws or wins, let us ignore this move.
-					let nextBest = TicTacToeGame.getTheBestMove(p);
-					do Keyboard.readChar();
-					if(bestScore<nextBest[0]) {
-						let bestMoveR = moveList[2*i];
-						let bestMoveC = moveList[(2*i)+1];
-						let bestScore = nextBest[0];
-					}
-					do nextBest.dispose();
+				if(otherBest[0] =3) { // if the other guy wins, let us ignore this move.
+					// we don't want something where the other guy wins!
+				} else {
+					let bestMoveR = moveList[2*i];
+					let bestMoveC = moveList[(2*i)+1];
 				}	
 			}	
 			do Keyboard.readChar();

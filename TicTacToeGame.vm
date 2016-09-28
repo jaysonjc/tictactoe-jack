@@ -216,6 +216,334 @@ function TicTacToeGame.getComputerMove 0
 push static 2
 call TicTacToeGame.getTheBestMove 1
 return
+function TicTacToeGame.findWinOrDraw 5
+push constant 0
+pop local 4
+push constant 0
+pop local 2
+push constant 0
+pop local 0
+push static 0
+call Board.getFreeCellCount 1
+pop local 1
+push static 0
+call Board.getAvailableMoves 1
+pop local 3
+label WHILE_EXP0
+push local 2
+push local 1
+lt
+push local 0
+not
+and
+not
+if-goto WHILE_END0
+push static 0
+push constant 2
+push local 2
+call Math.multiply 2
+push local 3
+add
+pop pointer 1
+push that 0
+push constant 2
+push local 2
+call Math.multiply 2
+push constant 1
+add
+push local 3
+add
+pop pointer 1
+push that 0
+push argument 0
+call Board.makeMove 4
+pop temp 0
+push static 0
+call Board.evaluateBoard 1
+pop temp 0
+push static 0
+call Board.isDraw 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 3
+call Array.new 1
+pop local 4
+push constant 0
+push local 4
+add
+push constant 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push local 4
+add
+push constant 2
+push local 2
+call Math.multiply 2
+push local 3
+add
+pop pointer 1
+push that 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 4
+add
+push constant 2
+push local 2
+call Math.multiply 2
+push constant 1
+add
+push local 3
+add
+pop pointer 1
+push that 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+not
+pop local 0
+label IF_FALSE0
+push static 0
+call Board.isWin 1
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 3
+call Array.new 1
+pop local 4
+push constant 0
+push local 4
+add
+push constant 2
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push local 4
+add
+push constant 2
+push local 2
+call Math.multiply 2
+push local 3
+add
+pop pointer 1
+push that 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 4
+add
+push constant 2
+push local 2
+call Math.multiply 2
+push constant 1
+add
+push local 3
+add
+pop pointer 1
+push that 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+not
+pop local 0
+label IF_FALSE1
+push static 0
+push constant 2
+push local 2
+call Math.multiply 2
+push local 3
+add
+pop pointer 1
+push that 0
+push constant 2
+push local 2
+call Math.multiply 2
+push constant 1
+add
+push local 3
+add
+pop pointer 1
+push that 0
+push argument 0
+call Board.takeBackMove 4
+pop temp 0
+push local 2
+push constant 1
+add
+pop local 2
+goto WHILE_EXP0
+label WHILE_END0
+push local 3
+call Array.dispose 1
+pop temp 0
+push local 4
+return
+function TicTacToeGame.getTheBestMove 8
+push argument 0
+call TicTacToeGame.findWinOrDraw 1
+pop local 0
+push constant 3
+pop local 5
+push local 0
+push constant 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+return
+goto IF_END0
+label IF_FALSE0
+push static 0
+call Board.getFreeCellCount 1
+pop local 4
+push static 0
+call Board.getAvailableMoves 1
+pop local 1
+push constant 0
+pop local 3
+label WHILE_EXP0
+push local 3
+push local 4
+lt
+not
+if-goto WHILE_END0
+push static 0
+push constant 2
+push local 3
+call Math.multiply 2
+push local 1
+add
+pop pointer 1
+push that 0
+push constant 2
+push local 3
+call Math.multiply 2
+push constant 1
+add
+push local 1
+add
+pop pointer 1
+push that 0
+push argument 0
+call Board.makeMove 4
+pop temp 0
+push argument 0
+call TicTacToeGame.getOtherPiece 1
+call TicTacToeGame.getTheBestMove 1
+pop local 2
+push constant 0
+push local 2
+add
+pop pointer 1
+push that 0
+push local 5
+lt
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+push local 2
+add
+pop pointer 1
+push that 0
+pop local 5
+push constant 2
+push local 3
+call Math.multiply 2
+push local 1
+add
+pop pointer 1
+push that 0
+pop local 6
+push constant 2
+push local 3
+call Math.multiply 2
+push constant 1
+add
+push local 1
+add
+pop pointer 1
+push that 0
+pop local 7
+label IF_FALSE1
+push local 2
+call Array.dispose 1
+pop temp 0
+push static 0
+push constant 2
+push local 3
+call Math.multiply 2
+push local 1
+add
+pop pointer 1
+push that 0
+push constant 2
+push local 3
+call Math.multiply 2
+push constant 1
+add
+push local 1
+add
+pop pointer 1
+push that 0
+push argument 0
+call Board.takeBackMove 4
+pop temp 0
+push local 3
+push constant 1
+add
+pop local 3
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+call Array.dispose 1
+pop temp 0
+push constant 3
+call Array.new 1
+pop local 0
+push constant 0
+push local 0
+add
+push constant 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push local 0
+add
+push local 6
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 0
+add
+push local 7
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+label IF_END0
+push local 0
+return
 function TicTacToeGame.getOtherPiece 0
 push argument 0
 push static 1
@@ -260,7 +588,7 @@ push temp 0
 pop that 0
 push local 0
 return
-function TicTacToeGame.getTheBestMove 9
+function TicTacToeGame.getTheBestMove2 9
 push static 0
 call Board.getFreeCellCount 1
 pop local 0
@@ -364,26 +692,13 @@ push local 6
 add
 pop pointer 1
 push that 0
-push constant 2
-lt
+push constant 3
+eq
 if-goto IF_TRUE2
 goto IF_FALSE2
 label IF_TRUE2
-push argument 0
-call TicTacToeGame.getTheBestMove 1
-pop local 7
-call Keyboard.readChar 0
-pop temp 0
-push local 4
-push constant 0
-push local 7
-add
-pop pointer 1
-push that 0
-lt
-if-goto IF_TRUE3
-goto IF_FALSE3
-label IF_TRUE3
+goto IF_END2
+label IF_FALSE2
 push constant 2
 push local 1
 call Math.multiply 2
@@ -402,17 +717,7 @@ add
 pop pointer 1
 push that 0
 pop local 3
-push constant 0
-push local 7
-add
-pop pointer 1
-push that 0
-pop local 4
-label IF_FALSE3
-push local 7
-call Array.dispose 1
-pop temp 0
-label IF_FALSE2
+label IF_END2
 label IF_END1
 call Keyboard.readChar 0
 pop temp 0
