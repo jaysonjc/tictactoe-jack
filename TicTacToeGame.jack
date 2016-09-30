@@ -94,6 +94,7 @@ class TicTacToeGame {
 		var int currentPlayer,currentPiece; //  0 for you and 1 for computer
 		var boolean gameOver;
 		var int gameStatus;
+		do TicTacToeGame.showCredits();
 		
 		do InputUtil.showMessage("Press enter to start the game!");
 		do TicTacToeGame.seedGame();
@@ -270,6 +271,14 @@ class TicTacToeGame {
 			}
 		}
 		do Random.setSeed(seedCounter);
+		return;
+	}
+	
+	function void showCredits() {
+		do Output.moveCursor(20,16);
+		do Output.printString("Tic Tac Toe in Jack Language");
+		do Output.moveCursor(21,22);
+		do Output.printString("By Jayson Joseph");
 		return;
 	}
 	
