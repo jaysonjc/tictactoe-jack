@@ -1,8 +1,6 @@
 class Main {
 
 	function void main() {
-		do Output.printString("Starting Game! Press a key!");
-		do Keyboard.readChar();
 		do Screen.clearScreen();
 		
 		do TicTacToeGame.init();

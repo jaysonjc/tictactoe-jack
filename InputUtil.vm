@@ -1,20 +1,16 @@
 function InputUtil.init 0
-push constant 0
-pop static 0
-push constant 0
-pop static 1
 push constant 1
-pop static 2
-push constant 0
-pop static 3
+pop static 0
+push constant 1
+pop static 1
 push constant 0
 return
-function InputUtil.eraseMessage 0
+function InputUtil.eraseMessage 1
 push static 0
 push static 1
 call Output.moveCursor 2
 pop temp 0
-push constant 30
+push constant 49
 call String.new 1
 push constant 32
 call String.appendChar 2
@@ -76,7 +72,50 @@ push constant 32
 call String.appendChar 2
 push constant 32
 call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+push constant 32
+call String.appendChar 2
+pop local 0
+push local 0
 call Output.printString 1
+pop temp 0
+push local 0
+call String.dispose 1
 pop temp 0
 push constant 0
 return
@@ -90,16 +129,21 @@ pop temp 0
 push argument 0
 call Output.printString 1
 pop temp 0
+push argument 0
+call String.dispose 1
+pop temp 0
 push constant 0
 return
 function InputUtil.readInput 2
+call InputUtil.eraseMessage 0
+pop temp 0
 label WHILE_EXP0
 push constant 0
 not
 not
 if-goto WHILE_END0
-push static 2
-push static 3
+push static 0
+push static 1
 call Output.moveCursor 2
 pop temp 0
 push argument 0
@@ -117,6 +161,48 @@ and
 if-goto IF_TRUE0
 goto IF_FALSE0
 label IF_TRUE0
+push argument 0
+call String.dispose 1
+pop temp 0
+push local 0
+push constant 48
+sub
+return
+label IF_FALSE0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return
+function InputUtil.waitForZeroOrOne 2
+call InputUtil.eraseMessage 0
+pop temp 0
+label WHILE_EXP0
+push constant 0
+not
+not
+if-goto WHILE_END0
+push static 0
+push static 1
+call Output.moveCursor 2
+pop temp 0
+push argument 0
+call Output.printString 1
+pop temp 0
+call Keyboard.readChar 0
+pop local 0
+push local 0
+push constant 47
+gt
+push local 0
+push constant 50
+lt
+and
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 0
+call String.dispose 1
+pop temp 0
 push local 0
 push constant 48
 sub

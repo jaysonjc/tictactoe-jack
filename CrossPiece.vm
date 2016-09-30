@@ -1,6 +1,0 @@
-function CrossPiece.new 0
-push constant 0
-call Memory.alloc 1
-pop pointer 0
-push pointer 0
-return

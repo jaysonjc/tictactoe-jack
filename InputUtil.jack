@@ -1,24 +1,26 @@
 class InputUtil {
-	static int mr,mc,ir,ic;
+	static int ir,ic;
 
 	function void init() {
-		let mr = 0;
-		let mc = 0;
 		let ir = 1;
-		let ic = 0;
+		let ic = 1;
 		return;
 	}
 
 	function void eraseMessage() {
-		do Output.moveCursor(mr,mc);
-		do Output.printString("                              ");
+		var String s;
+		do Output.moveCursor(ir,ic);
+		let s = "                                                 ";
+		do Output.printString(s);
+		do s.dispose();
 		return;
 	}
 
 	function void showMessage(String s) {
 		do InputUtil.eraseMessage();
-		do Output.moveCursor(mr,mc);
+		do Output.moveCursor(ir,ic);
 		do Output.printString(s);
+		do s.dispose();
 		return;
 	}
 	
@@ -27,12 +29,31 @@ class InputUtil {
 	function int readInput(String s) {
 		var char c;
 		var int choice;
+		do InputUtil.eraseMessage();		
 		while(true) {
 			do Output.moveCursor(ir,ic);
 			do Output.printString(s);
 			let c = Keyboard.readChar();
 			// 48 to 57
 			if((c>47) & (c<58)) {
+				do s.dispose();
+				return c-48;
+			}
+		}
+		return 0;// Never reach here!
+	}
+	
+	function int waitForZeroOrOne(String s) {
+		var char c;
+		var int choice;
+		do InputUtil.eraseMessage();		
+		while(true) {
+			do Output.moveCursor(ir,ic);
+			do Output.printString(s);
+			let c = Keyboard.readChar();
+			// 48 to 57
+			if((c>47) & (c<50)) {
+				do s.dispose();
 				return c-48;
 			}
 		}

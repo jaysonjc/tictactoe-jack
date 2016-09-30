@@ -1,14 +1,12 @@
 class Board {
 	
 	field Array boardArray; // 0 vacant, 1 naught, 2 cross
-	field int boardX,boardY,boardSize,thickness,cellSize;// 100,50,120(40 is cellsize!),4
-	field int winThickness;
-	
-	// board status;
+	field int boardX,boardY,boardSize,thickness,cellSize;
+	field int winThickness; // thickness of the line drawn in case of win!
 	field boolean isWin, isDraw;
 	field int winMode; // 0 - row, 1-col, 2 - topdiag, 3 - bottom diag
 	field int winRow,winCol;// winning row or column
-	field int winPieceType; // 1 naught, 2 cross;
+	field int freeCellCount; // how many cells are free?
 	
 	
 	constructor Board new(int x,int y) {		
@@ -18,12 +16,6 @@ class Board {
 		let thickness = 4;
 		let winThickness = 2;
 		let cellSize = boardSize/3;
-		
-		// board status
-		let isWin = false;
-		let isDraw  = false;
-		
-		
 		let boardArray = Array.new(9);
 		do clearBoard();
 		do drawBoardBorders();
@@ -31,12 +23,18 @@ class Board {
 	}
 	
 	method void dispose() {
+		do Screen.setColor(false);
+		do Screen.drawRectangle(boardX,boardY,boardX+boardSize, boardY+boardSize);
+		do Screen.setColor(true);
 		do Memory.deAlloc(boardArray);
 		return;
 	}
 	
 	method void clearBoard() {
 		var int i;
+		let freeCellCount = 9;
+		let isWin = false;
+		let isDraw  = false;
 		while(i<9) {
 			let boardArray[i] = 0;
 			let i = i + 1;
@@ -44,10 +42,12 @@ class Board {
 		return;
 	}
 	
+	// convert row/col to the array index
 	method int posToIndex(int row, int col) {
 		return (row*3)+col;
 	}
 	
+	// is the selected row/col free of pieces?
 	method boolean isFree(int row, int col) {
 		if(boardArray[posToIndex(row,col)]=0) {
 			return true;
@@ -56,6 +56,7 @@ class Board {
 		}
 	}
 	
+	// convert row to pixel y for drawing
 	method int rowToY(int r) {
 		return boardY + (r*cellSize);
 	}
@@ -67,19 +68,16 @@ class Board {
 	method void drawBoardBorders() {
 		var int offset;
 		let offset = thickness/2;
-		
 		// vertical lines
 		do Screen.drawRectangle(boardX+cellSize-offset,boardY, boardX+cellSize+offset,boardY+boardSize);
 		do Screen.drawRectangle(boardX+(2*cellSize)-offset,boardY, boardX+(2*cellSize)+offset,boardY+boardSize);
-		
-		
 		// horizontal lines
 		do Screen.drawRectangle(boardX,boardY+cellSize-offset, boardX+boardSize,boardY+cellSize+offset);
 		do Screen.drawRectangle(boardX,boardY+(2*cellSize)-offset, boardX+boardSize,boardY+(2*cellSize)+offset);
-		
 		return;
 	}
 	
+	// draw win for rows
 	method void drawRowWin(int r) {
 		var int y,offset;
 		let y = rowToY(r)+(cellSize/2); 
@@ -88,6 +86,7 @@ class Board {
 		return;
 	}
 	
+	// draw win for columns
 	method void drawColWin(int c) {
 		var int x,offset;
 		let x = colToX(c)+(cellSize/2); 
@@ -96,6 +95,7 @@ class Board {
 		return;
 	}
 	
+	// draw diagonal win
 	method void drawTopDiagonalWin() {
 		var int i,x,y;
 		let x = boardX;
@@ -110,6 +110,7 @@ class Board {
 		return;
 	}
 	
+	// draw diagonal win
 	method void drawBottomDiagonalWin() {
 		var int i,x,y;
 		let x = boardX;
@@ -149,14 +150,14 @@ class Board {
 		return isDraw;
 	}
 	
-	
+	// evaluate board to find draw or win
 	method void evaluateBoard() {
 		var int r,c,b1,b2,b3;
 		let r = 0;
 		let c = 0;
 		let isWin = false;
 		let isDraw = false;
-		
+				
 		while(r<3) {
 			let b1 = boardArray[posToIndex(r,0)];
 			let b2 = boardArray[posToIndex(r,1)];
@@ -165,7 +166,6 @@ class Board {
 				let isWin = true;
 				let winMode = 0;
 				let winRow = r;
-				let winPieceType = b1;
 				return;
 			}
 			let r = r+1;
@@ -178,78 +178,65 @@ class Board {
 				let isWin = true;
 				let winMode = 1;
 				let winCol = c;
-				let winPieceType = b1;
 				return;
 			}
 			let c = c+1;
 		}
 		
-		let b1 = boardArray[posToIndex(0,0)];
-		let b2 = boardArray[posToIndex(1,1)];
-		let b3 = boardArray[posToIndex(2,2)];
+		let b1 = boardArray[0];
+		let b2 = boardArray[4];
+		let b3 = boardArray[8];
 		if((b1=b2) & (b2=b3)& (b1>0)) {
 			let isWin = true;
 			let winMode = 2;
-			let winPieceType = b1;
 			return;
 		}
 		
-		let b1 = boardArray[posToIndex(2,0)];
-		let b2 = boardArray[posToIndex(1,1)];
-		let b3 = boardArray[posToIndex(0,2)];
+		let b1 = boardArray[6];
+		let b2 = boardArray[4];
+		let b3 = boardArray[2];
 		if((b1=b2) & (b2=b3)& (b1>0)) {
 			let isWin = true;
 			let winMode = 3;
-			let winPieceType = b1;
 			return;
 		}
-		if(getFreeCellCount()=0) {
+		
+		// if no win and also no further moves, we have a draw!
+		if(freeCellCount=0) {
 			let isDraw = true;
 			return;
 		}
+		
 		return ;
 	}
 	
-	method boolean isOpen() {
-		return ((~isWin) & (~isDraw));
-	}
 	
 	
 	method void drawMove(int row, int col,Piece p) {
 		var int xl,yt;
-		
 		let xl = colToX(col) + ((cellSize-p.getWidth())/2);
 		let yt = rowToY(row) + ((cellSize-p.getHeight())/2);
 		do p.drawPiece(xl,yt);
-	
 		return;
 	}
 	
+	// make a move (doen't draw the move on screen)
 	method void makeMove(int row, int col, Piece p) {
 		let boardArray[posToIndex(row,col)] = p.getType();
-		do drawMove(row,col,p);
+		let freeCellCount = freeCellCount-1;
 		return;
 	}
 	
+	// take back the move
 	method void takeBackMove(int row, int col,Piece p) {
 		let boardArray[posToIndex(row,col)] = 0;
-		do Screen.setColor(false);
-		do drawMove(row,col,p);
-		do Screen.setColor(true);
+		let freeCellCount = freeCellCount + 1;
 		return;
 	}
 	
 	
 	method int getFreeCellCount() {
-		var int i,total;
-		let total = 0;
-		while(i<9) {
-			if(boardArray[i]=0) {
-				let total = total+1;
-			}
-			let i = i + 1;
-		}
-		return total;
+		return freeCellCount;
 	}
 	
 	method Array getAvailableMoves() {
@@ -257,7 +244,7 @@ class Board {
 		var int r1,c1,counter;
 		let r1 = 0;
 		let c1 = 0;
-		let moves = Array.new(getFreeCellCount()*2);
+		let moves = Array.new(freeCellCount*2);
 		let counter = 0;
 		while(r1<3) {
 			let c1 = 0;
@@ -272,7 +259,5 @@ class Board {
 			let r1 = r1 + 1;
 		}
 		return moves;
-	
 	}
-
 }
