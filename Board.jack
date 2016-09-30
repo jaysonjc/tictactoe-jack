@@ -14,7 +14,7 @@ class Board {
 		let boardY = y;
 		let boardSize = 120;
 		let thickness = 4;
-		let winThickness = 2;
+		let winThickness = 4;
 		let cellSize = boardSize/3;
 		let boardArray = Array.new(9);
 		do clearBoard();

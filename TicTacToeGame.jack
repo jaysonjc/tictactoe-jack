@@ -61,15 +61,22 @@ class TicTacToeGame {
 	
 	// 0-quit, 1-continue, 2-draw, 3-win
 	function int play(int player,Piece p) {
+		var boolean validPlayerInput;
 		var int input;
 		var Array playerMove,computerMove;
+		let validPlayerInput = false;
+		
 		if(player=0) { // human
-			let input = InputUtil.readInput("Enter move (1 to 9 or 0 to restart):");
-			
-			if(input=0) {
-				return 0; // restart game!
+		
+			while(~validPlayerInput) { // the player input must be valid!
+				let input = InputUtil.readInput("Enter move (1 to 9 or 0 to restart):");
+				if(input=0) {
+					return 0; // restart game!
+				}
+				let playerMove = TicTacToeGame.inputToMove(input);
+				let validPlayerInput = board.isFree(playerMove[0],playerMove[1]);
 			}
-			let playerMove = TicTacToeGame.inputToMove(input);
+			
 			do board.makeMove(playerMove[0],playerMove[1],p);
 			do board.drawMove(playerMove[0],playerMove[1],p);
 			do playerMove.dispose();
