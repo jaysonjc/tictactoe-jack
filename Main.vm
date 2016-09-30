@@ -1,9 +1,0 @@
-function Main.main 0
-call Screen.clearScreen 0
-pop temp 0
-call TicTacToeGame.init 0
-pop temp 0
-call TicTacToeGame.startGame 0
-pop temp 0
-push constant 0
-return
